@@ -1,5 +1,5 @@
 # Texture Exporter
-This is texture exporter that takes `.perm.bin` file and export textures to `.png` files.
+This is command line tool that takes `.perm.bin` file and export textures to `.png` files.
 
 ## Args
 `-perm`: Path to `.perm.bin` file.
