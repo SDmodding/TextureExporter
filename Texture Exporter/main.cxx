@@ -331,11 +331,10 @@ void ReturnKeyWait()
 int main(int p_Argc, char** p_Argv)
 {
 #ifdef _DEBUG
-	/*if (!IsDebuggerPresent())
-		int m_DebugKey = getchar();*/
+	if (!IsDebuggerPresent())
+		int m_DebugKey = getchar();
 #endif
 
-	MessageBoxA(0, "dsad", "dsadas", MB_OK);
 	char m_CurrentDirectory[MAX_PATH] = { '\0' };
 	GetCurrentDirectoryA(sizeof(m_CurrentDirectory), m_CurrentDirectory);
 
