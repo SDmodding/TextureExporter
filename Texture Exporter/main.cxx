@@ -13,7 +13,7 @@
 #include "FileUtil.hxx"
 
 // Defines
-#define PROJECT_VERSION		"v1.0.0"
+#define PROJECT_VERSION		"v1.0.1"
 #define PROJECT_NAME		"Texture Exporter " PROJECT_VERSION
 
 #define ILLUSION_TEXTURE_PC64		0xCDBFA090
@@ -42,17 +42,12 @@ struct DirectX_t
 
 	HRESULT CreateDevice()
 	{
-		D3D_FEATURE_LEVEL m_FeatureLevels[] =
-		{
-			D3D_FEATURE_LEVEL_11_0,
-			D3D_FEATURE_LEVEL_10_1,
-			D3D_FEATURE_LEVEL_10_0,
-			D3D_FEATURE_LEVEL_9_3,
-			D3D_FEATURE_LEVEL_9_2,
-			D3D_FEATURE_LEVEL_9_1
-		};
+		D3D_FEATURE_LEVEL m_FeatureLevels[] = { D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_0 };
+		HRESULT m_Res = D3D11CreateDevice(0, D3D_DRIVER_TYPE_HARDWARE, 0, 0, m_FeatureLevels, ARRAYSIZE(m_FeatureLevels), D3D11_SDK_VERSION, &m_Device, &m_FeatureLevel, &m_DeviceCtx);
+		if (m_Res == DXGI_ERROR_UNSUPPORTED) // Try high-performance WARP software driver if hardware is not available.
+			m_Res = D3D11CreateDevice(0, D3D_DRIVER_TYPE_WARP, 0, 0, m_FeatureLevels, ARRAYSIZE(m_FeatureLevels), D3D11_SDK_VERSION, &m_Device, &m_FeatureLevel, &m_DeviceCtx);
 
-		return D3D11CreateDevice(0, D3D_DRIVER_TYPE_HARDWARE, 0, 0, m_FeatureLevels, ARRAYSIZE(m_FeatureLevels), D3D11_SDK_VERSION, &m_Device, &m_FeatureLevel, &m_DeviceCtx);
+		return m_Res;
 	}
 };
 DirectX_t g_DirectX;
@@ -336,10 +331,11 @@ void ReturnKeyWait()
 int main(int p_Argc, char** p_Argv)
 {
 #ifdef _DEBUG
-	if (!IsDebuggerPresent())
-		int m_DebugKey = getchar();
+	/*if (!IsDebuggerPresent())
+		int m_DebugKey = getchar();*/
 #endif
 
+	MessageBoxA(0, "dsad", "dsadas", MB_OK);
 	char m_CurrentDirectory[MAX_PATH] = { '\0' };
 	GetCurrentDirectoryA(sizeof(m_CurrentDirectory), m_CurrentDirectory);
 
@@ -351,6 +347,10 @@ int main(int p_Argc, char** p_Argv)
 		printf("[ ! ] Failed to initialize D3D11 Device.\n"); ReturnKeyWait();
 		return 1;
 	}
+
+	HRESULT m_CoRes = CoInitializeEx(0, COINIT_MULTITHREADED);
+	if (FAILED(m_CoRes))
+		printf("[ WARNING ] Failed to initialize COM.\n");
 
 	std::string m_PermPath	= GetArgParam("-perm");
 	std::string m_OutputDir = GetArgParam("-outdir");
